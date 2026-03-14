@@ -8,7 +8,6 @@ export const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// Attach JWT token on every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('vb_token')
   if (token) {
@@ -17,7 +16,6 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// Handle 401 globally — clear auth and redirect to login
 api.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -37,8 +35,8 @@ export const authApi = {
   login: (email: string, password: string) =>
     api.post('/auth/login', { email, password }),
   me: () => api.get('/auth/me'),
-  clerkSync: (clerkId: string, email: string, name: string) =>
-    api.post('/auth/clerk-sync', { clerkId, email, name }),
+  googleLogin: (accessToken: string) =>
+    api.post('/auth/google', { accessToken }),
 }
 
 // ─── Business ────────────────────────────────────────────────────────────────
@@ -56,6 +54,8 @@ export const businessApi = {
 // ─── Knowledge ────────────────────────────────────────────────────────────────
 export const knowledgeApi = {
   list: (bizId: string) => api.get(`/knowledge/${bizId}`),
+  getContent: (bizId: string, sourceId: string) =>
+    api.get(`/knowledge/${bizId}/${sourceId}/content`),
   addUrl: (bizId: string, url: string) =>
     api.post(`/knowledge/${bizId}/url`, { url }),
   addFile: (bizId: string, file: File) => {

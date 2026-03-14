@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 const NAV = [
   { to: '/dashboard',           label: 'Overview',    icon: '📊' },
   { to: '/dashboard/knowledge', label: 'Knowledge',   icon: '🧠' },
+  { to: '/dashboard/agent',     label: 'AI Agent',    icon: '🤖' },
   { to: '/dashboard/billing',   label: 'Billing',     icon: '💳' },
   { to: '/dashboard/settings',  label: 'Settings',    icon: '⚙️' },
 ]

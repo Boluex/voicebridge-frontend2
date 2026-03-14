@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { businessApi } from '../../lib/api'
+import { businessApi } from '../services/api'
 
 interface Biz {
   id: string; name: string; category: string; description?: string; phone?: string;
   email?: string; address?: string; city?: string; deliveryRadius?: number;
-  paystackPublicKey?: string; paystackSecretKey?: string; orderWebhookUrl?: string;
+  bankName?: string; accountName?: string; accountNumber?: string; orderWebhookUrl?: string;
   notificationEmail?: string; escalationPhone?: string
 }
 
@@ -58,7 +58,7 @@ export default function SettingsPage() {
   const [form, setForm] = useState({
     name: '', category: 'RESTAURANT', description: '', phone: '', email: '',
     address: '', city: '', deliveryRadius: '5',
-    paystackPublicKey: '', paystackSecretKey: '',
+    bankName: '', accountName: '', accountNumber: '',
     orderWebhookUrl: '', notificationEmail: '', escalationPhone: '',
   })
   const [saving, setSaving]     = useState(false)
@@ -81,8 +81,9 @@ export default function SettingsPage() {
       address:           activeBiz.address || '',
       city:              activeBiz.city || '',
       deliveryRadius:    String(activeBiz.deliveryRadius ?? 5),
-      paystackPublicKey: activeBiz.paystackPublicKey || '',
-      paystackSecretKey: activeBiz.paystackSecretKey || '',
+      bankName:          activeBiz.bankName || '',
+      accountName:       activeBiz.accountName || '',
+      accountNumber:     activeBiz.accountNumber || '',
       orderWebhookUrl:   activeBiz.orderWebhookUrl || '',
       notificationEmail: activeBiz.notificationEmail || '',
       escalationPhone:   activeBiz.escalationPhone || '',
@@ -277,38 +278,55 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Paystack */}
-          <div className="glass rounded-xl p-5 mb-4">
-            <h3 className="text-white font-semibold mb-1">💳 Paystack Configuration</h3>
+          {/* Payout Bank Details */}
+          <div className="glass rounded-xl p-5 mb-4 mt-8">
+            <h3 className="text-white font-semibold mb-1">🏦 Payout Bank Details</h3>
             <p className="text-gray-500 text-xs mb-4">
-              Your business Paystack keys — used when processing customer orders via voice call.
+              Where VoiceBridge will transfer your funds after processing customer payments via AI calls.
             </p>
             <div className="grid md:grid-cols-2 gap-4">
               <InputField
-                label="Public Key"
-                value={form.paystackPublicKey}
-                onChange={setField('paystackPublicKey')}
-                placeholder="pk_live_…"
+                label="Bank Name"
+                value={form.bankName}
+                onChange={setField('bankName')}
+                placeholder="e.g. Guarantee Trust Bank"
               />
               <InputField
-                label="Secret Key"
-                value={form.paystackSecretKey}
-                onChange={setField('paystackSecretKey')}
-                type="password"
-                placeholder="sk_live_…"
+                label="Account Number"
+                value={form.accountNumber}
+                onChange={setField('accountNumber')}
+                placeholder="0000000000"
               />
-              <InputField
-                label="Order Webhook URL"
-                value={form.orderWebhookUrl}
-                onChange={setField('orderWebhookUrl')}
-                placeholder="https://yourbiz.com/webhook"
-              />
+              <div className="md:col-span-2">
+                <InputField
+                  label="Account Name"
+                  value={form.accountName}
+                  onChange={setField('accountName')}
+                  placeholder="e.g. Mama's Kitchen Enterpise"
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Notifications */}
+          <div className="glass rounded-xl p-5 mb-4 mt-8">
+            <h3 className="text-white font-semibold mb-1">🔔 Order Notifications</h3>
+            <p className="text-gray-500 text-xs mb-4">
+              How you want to be notified when the VoiceBridge AI processes a paid order.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
               <InputField
                 label="Notification Email"
                 value={form.notificationEmail}
                 onChange={setField('notificationEmail')}
                 type="email"
                 placeholder="orders@yourbusiness.com"
+              />
+              <InputField
+                label="Order Webhook URL"
+                value={form.orderWebhookUrl}
+                onChange={setField('orderWebhookUrl')}
+                placeholder="https://yourbiz.com/webhook"
               />
             </div>
           </div>

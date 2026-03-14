@@ -14,8 +14,8 @@ interface AuthStore {
   error: string | null
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
-  clerkSync: (clerkId: string, email: string, name: string) => Promise<void>
-  logout: () => void
+  loginWithGoogle: (accessToken: string) => Promise<void>
+  logout: () => Promise<void>
   setAuth: (user: User, token: string) => void
   hydrate: () => void
 }
@@ -73,16 +73,16 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  logout: () => {
+  logout: async () => {
     localStorage.removeItem('vb_token')
     localStorage.removeItem('vb_user')
     set({ user: null, token: null })
   },
 
-  clerkSync: async (clerkId, email, name) => {
+  loginWithGoogle: async (accessToken) => {
     set({ isLoading: true, error: null })
     try {
-      const { data } = await authApi.clerkSync(clerkId, email, name)
+      const { data } = await authApi.googleLogin(accessToken)
       localStorage.setItem('vb_token', data.token)
       localStorage.setItem('vb_user', JSON.stringify(data.user))
       set({ user: data.user, token: data.token, isLoading: false })
